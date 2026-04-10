@@ -329,10 +329,10 @@ async function cachedMicrocompactPath(
     }
   }
 
-  const toolsToDelete = mod.getToolResultsToDelete(state)
+  const toolsToDelete = mod.getToolResultsToDelete(state)//根据阈值决定删除哪些工具
 
   if (toolsToDelete.length > 0) {
-    // Create and queue the cache_edits block for the API layer
+    // Create and queue the cache_edits block for the API layer 创建 cache_edits 块（不修改本地消息）
     const cacheEdits = mod.createCacheEditsBlock(state, toolsToDelete)
     if (cacheEdits) {
       pendingCacheEdits = cacheEdits
@@ -381,7 +381,7 @@ async function cachedMicrocompactPath(
             >
           )?.cache_deleted_input_tokens ?? 0)
         : 0
-
+    //返回原始消息，cache_edits 在 API 层添加
     return {
       messages,
       compactionInfo: {

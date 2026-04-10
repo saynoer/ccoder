@@ -202,18 +202,18 @@ export type QueryParams = {
 
 // Mutable state carried between loop iterations
 type State = {
-  messages: Message[]
-  toolUseContext: ToolUseContext
-  autoCompactTracking: AutoCompactTrackingState | undefined
-  maxOutputTokensRecoveryCount: number
-  hasAttemptedReactiveCompact: boolean
-  maxOutputTokensOverride: number | undefined
-  pendingToolUseSummary: Promise<ToolUseSummaryMessage | null> | undefined
+  messages: Message[] //历史消息
+  toolUseContext: ToolUseContext   //工具上下文
+  autoCompactTracking: AutoCompactTrackingState | undefined  // 自动压缩跟踪
+  maxOutputTokensRecoveryCount: number  //输出token恢复计数
+  hasAttemptedReactiveCompact: boolean//是否尝试过反应式压缩
+  maxOutputTokensOverride: number | undefined   //最大输出taoken覆盖
+  pendingToolUseSummary: Promise<ToolUseSummaryMessage | null> | undefined //待处理的工具使用摘要
   stopHookActive: boolean | undefined
-  turnCount: number
+  turnCount: number //轮次计数
   // Why the previous iteration continued. Undefined on first iteration.
   // Lets tests assert recovery paths fired without inspecting message contents.
-  transition: Continue | undefined
+  transition: Continue | undefined  //上次迭代继续原因
 }
 
 export async function* query(
@@ -298,13 +298,13 @@ async function* queryLoop(
   // so per-iteration firing would ask sideQuery the same question N times.
   // Consume point polls settledAt (never blocks). `using` disposes on all
   // generator exit paths — see MemoryPrefetch for dispose/telemetry semantics.
-  using pendingMemoryPrefetch = startRelevantMemoryPrefetch(
+  using pendingMemoryPrefetch = startRelevantMemoryPrefetch( //启动内存预取
     state.messages,
     state.toolUseContext,
   )
 
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
+  // eslint-disable-next-line no-constant-condition   1. 预处理（压缩、折叠）  2. 调用 API 流式响应3. 执行工具
+  while (true) {  //4. 处理附件和通知  // 5. 决定是否继续
     // Destructure state at the top of each iteration. toolUseContext alone
     // is reassigned within an iteration (queryTracking, messages updates);
     // the rest are read-only between continue sites.
@@ -411,7 +411,7 @@ async function* queryLoop(
 
     // Apply microcompact before autocompact
     queryCheckpoint('query_microcompact_start')
-    const microcompactResult = await deps.microcompact(
+    const microcompactResult = await deps.microcompact(//微压缩
       messagesForQuery,
       toolUseContext,
       querySource,

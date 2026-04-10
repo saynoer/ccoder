@@ -38,6 +38,7 @@ import {
   EXPLORE_AGENT,
   EXPLORE_AGENT_MIN_QUERIES,
 } from 'src/tools/AgentTool/built-in/exploreAgent.js'
+import { CODE_AGENT } from 'src/tools/AgentTool/built-in/codeAgent.js'
 import { areExplorePlanAgentsEnabled } from 'src/tools/AgentTool/builtInAgents.js'
 import {
   isScratchpadEnabled,
@@ -377,6 +378,7 @@ function getSessionSpecificGuidanceSection(
       ? [
           `For simple, directed codebase searches (e.g. for a specific file/class/function) use ${searchTools} directly.`,
           `For broader codebase exploration and deep research, use the ${AGENT_TOOL_NAME} tool with subagent_type=${EXPLORE_AGENT.agentType}. This is slower than using ${searchTools} directly, so use this only when a simple, directed search proves to be insufficient or when your task will clearly require more than ${EXPLORE_AGENT_MIN_QUERIES} queries.`,
+          `For complex code implementation tasks (adding features, refactoring, creating APIs), use the ${AGENT_TOOL_NAME} tool with subagent_type=${CODE_AGENT.agentType}. The Code Agent operates in three phases: Interpreter (understand requirements), Planner (create implementation plan), and Executor (implement and verify).`,
         ]
       : []),
     hasSkills

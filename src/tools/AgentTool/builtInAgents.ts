@@ -3,6 +3,7 @@ import { getIsNonInteractiveSession } from '../../bootstrap/state.js'
 import { getFeatureValue_CACHED_MAY_BE_STALE } from '../../services/analytics/growthbook.js'
 import { isEnvTruthy } from '../../utils/envUtils.js'
 import { CLAUDE_CODE_GUIDE_AGENT } from './built-in/claudeCodeGuideAgent.js'
+import { CODE_AGENT } from './built-in/codeAgent.js'
 import { EXPLORE_AGENT } from './built-in/exploreAgent.js'
 import { GENERAL_PURPOSE_AGENT } from './built-in/generalPurposeAgent.js'
 import { PLAN_AGENT } from './built-in/planAgent.js'
@@ -50,6 +51,9 @@ export function getBuiltInAgents(): AgentDefinition[] {
   if (areExplorePlanAgentsEnabled()) {
     agents.push(EXPLORE_AGENT, PLAN_AGENT)
   }
+
+  // Code Agent is always enabled (not dependent on Explore/Plan feature flag)
+  agents.push(CODE_AGENT)
 
   // Include Code Guide agent for non-SDK entrypoints
   const isNonSdkEntrypoint =
